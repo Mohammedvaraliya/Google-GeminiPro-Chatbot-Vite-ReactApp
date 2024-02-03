@@ -40,7 +40,7 @@ const Chatbot: React.FC = () => {
     const [modelResponses, setModelResponses] = useState<string[]>([]);
 
     const MODEL_NAME = 'gemini-pro';
-    const VITE_API_KEY = import.meta.env.VITE_GEMINI_PRO_API_KEY;
+    const VITE_API_KEY = process.env.VITE_GEMINI_PRO_API_KEY;
     const API_KEY = VITE_API_KEY || '';
 
 
@@ -104,9 +104,13 @@ const Chatbot: React.FC = () => {
                 <div className="mb-4">
                     {/* Display only the ongoing conversation */}
                     {userMessages.map((userMessage, index) => (
-                        <div key={index} className={`mb-2 flex justify-end text-light-1`}>
-                            <p>{userMessage}</p>
-                            <p className="text-white">{modelResponses[index]}</p>
+                        <div key={index} className={`mb-2 flex`}>
+                            <div className={`flex justify-end text-light-1 w-full`}>
+                                <p>{userMessage}</p> <br />
+                            </div>
+                            <div className={`flex justify-start text-light-1 w-full`}>
+                                <p className="text-white">{modelResponses[index]}</p>
+                            </div>
                         </div>
                     ))}
                 </div>

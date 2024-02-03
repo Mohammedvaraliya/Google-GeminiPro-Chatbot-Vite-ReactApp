@@ -12,4 +12,7 @@ export default defineConfig({
     envCompatible(),
     react(),
   ],
+  define:{
+    'process.env.VITE_GEMINI_PRO_API_KEY': JSON.stringify(process.env.VITE_GEMINI_PRO_API_KEY)
+  }
 })
