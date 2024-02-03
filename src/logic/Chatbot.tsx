@@ -81,39 +81,55 @@ const Chatbot: React.FC = () => {
         history: messages,
     });
 
+    // setMessages([
+    //     ...messages,
+    //     { role: "user", parts: [{ text: userInput }] },
+    // ]);
+
     const handleSendMessage = async () => {
+
+        // Add the user's message to messages immediately
+        setMessages((prevMessages) => [
+            ...prevMessages,
+            { role: "user", parts: [{ text: userInput }] },
+        ]);
+
         setUserMessages([...userMessages, userInput]);
         setUserInput('');
 
         const result = await chat.sendMessage(userInput);
         const response = result.response;
 
-        setModelResponses([...modelResponses, response.text()]);
-
-        setMessages([
-            ...messages,
-            { role: "user", parts: [{ text: userInput }] },
+        // Update the messages with the model's response
+        setMessages((prevMessages) => [
+            ...prevMessages,
             { role: "model", parts: [{ text: response.text() }] },
         ]);
+
+        setModelResponses([...modelResponses, response.text()]);
 
     };
 
     return (
         <div className="absolute inset-0 flex items-center justify-center">
-            <div className="bg-dark-2 rounded-lg p-8 w-[400px]">
+            <div className="bg-dark-2 rounded-lg p-8 xl:w-1/2 xl:h-1/2 overflow-auto">
                 <div className="mb-4">
-                    {/* Display only the ongoing conversation */}
-                    {userMessages.map((userMessage, index) => (
+                    {/* Display only the ongoing conversation starting from the 6th element */}
+                    {messages.slice(6).map((message, index) => (
                         <div key={index} className={`mb-2 flex`}>
-                            <div className={`flex justify-end text-light-1 w-full`}>
-                                <p>{userMessage}</p> <br />
-                            </div>
-                            <div className={`flex justify-start text-light-1 w-full`}>
-                                <p className="text-white">{modelResponses[index]}</p>
-                            </div>
+                            {message.role === 'user' ? (
+                                <div className={`flex justify-end text-light-1 w-full`}>
+                                    <p className="bg-blue-500 p-2 rounded-md inline-block">{message.parts[0].text}</p>
+                                </div>
+                            ) : (
+                                <div className={`flex justify-start text-light-1 w-full`}>
+                                    <p className="bg-gray-500 p-2 rounded-md inline-block text-white">{message.parts[0].text}</p>
+                                </div>
+                            )}
                         </div>
                     ))}
                 </div>
+
                 <div className="flex items-center gap-2">
                     <input
                         type="text"
