@@ -111,18 +111,27 @@ const Chatbot: React.FC = () => {
     };
 
     return (
-        <div className="absolute inset-0 flex items-center justify-center">
-            <div className="bg-dark-2 rounded-lg p-8 xl:w-1/2 xl:h-1/2 overflow-auto">
-                <div className="mb-4">
+        <div className="w-4xl m-10 p-10 absolute inset-0 flex flex-col items-center justify-center">
+            <div className="bg-dark-2 rounded-lg p-8 shadow-lg max-w-screen-lg flex flex-col h-full">
+                {/* Chatbot Header Div */}
+                <div className="border-b-2 px-2 py-4 min-w-4xl">
+                    <div className="inline-flex items-center">
+                        <img src="/assets/college_logo.jpg" alt="logo" className="w-8" />
+                        <span className="ml-8">MVLU College ChatBot</span>
+                    </div>
+                </div>
+
+                {/* Chatbot Body Div */}
+                <div className="flex-1 overflow-auto mb-4 mt-4 custom-scrollbar">
                     {/* Display only the ongoing conversation starting from the 6th element */}
                     {messages.slice(6).map((message, index) => (
                         <div key={index} className={`mb-2 flex`}>
                             {message.role === 'user' ? (
-                                <div className={`flex justify-end text-light-1 w-full`}>
+                                <div className={`flex justify-end text-light-1 w-full mr-2`}>
                                     <p className="bg-blue-500 p-2 rounded-md inline-block">{message.parts[0].text}</p>
                                 </div>
                             ) : (
-                                <div className={`flex justify-start text-light-1 w-full`}>
+                                <div className={`flex justify-start text-light-1 w-full mr-2`}>
                                     <p className="bg-gray-500 p-2 rounded-md inline-block text-white">{message.parts[0].text}</p>
                                 </div>
                             )}
@@ -130,7 +139,8 @@ const Chatbot: React.FC = () => {
                     ))}
                 </div>
 
-                <div className="flex items-center gap-2">
+                {/* Chatbot Footer Div */}
+                <div className="border-t-2 flex items-center py-4 px-2">
                     <input
                         type="text"
                         value={userInput}
@@ -140,8 +150,8 @@ const Chatbot: React.FC = () => {
                                 handleSendMessage();
                             }
                         }}
-                        className="h-12 bg-dark-4 border-none placeholder:text-light-4 focus-visible:ring-1 focus-visible:ring-offset-1 ring-offset-light-3 flex-1 px-4 rounded-md"
-                        placeholder="Type your message..."
+                        className="h-12 bg-dark-4 border-none placeholder:text-light-4 focus-visible:ring-1 focus-visible:ring-offset-1 ring-offset-light-3 flex-1 px-4 rounded-md mr-2"
+                        placeholder="Type your query here..."
                     />
                     <button
                         onClick={handleSendMessage}
@@ -152,6 +162,7 @@ const Chatbot: React.FC = () => {
                 </div>
             </div>
         </div>
+
     );
 };
 
