@@ -104,7 +104,7 @@ const Chatbot: React.FC = () => {
     }, [messages]);
 
     return (
-        <div className="xs:h-full xs:m-0 xs:p-0 xl:m-10 xl:p-10 md:p-0 md:m-0 absolute inset-0 flex flex-col items-center justify-center">
+        <div className="xs:h-full xs:m-0 xs:p-0 xl:h-auto xl:m-10 xl:p-10 md:p-0 md:m-0 md:h-full absolute inset-0 flex flex-col items-center justify-center">
             <div className="bg-dark-2 rounded-lg p-8 shadow-lg w-lvw max-w-screen-lg flex flex-col h-full">
                 {/* Chatbot Header Div */}
                 <div className="border-b-2 px-2 py-4 min-w-4xl">
@@ -120,11 +120,11 @@ const Chatbot: React.FC = () => {
                     {messages.slice(6).map((message, index) => (
                         <div key={index} className={`mb-2 flex`}>
                             {message.role === 'user' ? (
-                                <div className={`flex justify-end text-light-1 w-full mr-2 ml-96 sm:ml-36`}>
+                                <div className={`flex justify-end text-light-1 w-full mr-2 xl:ml-96 xs:ml-11`}>
                                     <p className="bg-blue-500 p-2 inline-block rounded-b-xl rounded-tl-xl mb-2 mt-2">{message.parts[0].text}</p>
                                 </div>
                             ) : (
-                                <div className={`flex justify-start text-light-1 w-full mr-96 sm:mr-36`}>
+                                <div className={`flex justify-start text-light-1 w-full xl:mr-96 xs:mr-11`}>
                                     <p className="bg-gray-500 p-2 inline-block text-white rounded-b-xl rounded-tr-xl mb-2 mt-2">{message.parts[0].text}</p>
                                 </div>
                             )}
