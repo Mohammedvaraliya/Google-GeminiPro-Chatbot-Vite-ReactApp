@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from '@google/generative-ai';
 
 interface ChatMessage {
@@ -12,6 +12,8 @@ const Chatbot: React.FC = () => {
     const [userInput, setUserInput] = useState<string>('');
     const [userMessages, setUserMessages] = useState<string[]>([]);
     const [modelResponses, setModelResponses] = useState<string[]>([]);
+
+    const chatContainerRef = useRef<HTMLDivElement>(null);
 
     const MODEL_NAME = 'gemini-pro';
     const VITE_API_KEY = process.env.VITE_GEMINI_PRO_API_KEY;
@@ -81,6 +83,7 @@ const Chatbot: React.FC = () => {
 
     // Load predefined chat history from JSON file
     useEffect(() => {
+
         const loadChatHistory = async () => {
             try {
                 const response = await fetch('/assets/data/dataset.json');
@@ -94,8 +97,14 @@ const Chatbot: React.FC = () => {
         loadChatHistory();
     }, []);
 
+    useEffect(() => {
+        if (chatContainerRef.current) {
+            chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+        }
+    }, [messages]);
+
     return (
-        <div className="xs:max-h-full s:w-full m-10 p-10 absolute inset-0 flex flex-col items-center justify-center">
+        <div className="xs:h-full xs:m-0 xs:p-0 xl:m-10 xl:p-10 md:p-0 md:m-0 absolute inset-0 flex flex-col items-center justify-center">
             <div className="bg-dark-2 rounded-lg p-8 shadow-lg w-lvw max-w-screen-lg flex flex-col h-full">
                 {/* Chatbot Header Div */}
                 <div className="border-b-2 px-2 py-4 min-w-4xl">
@@ -106,16 +115,16 @@ const Chatbot: React.FC = () => {
                 </div>
 
                 {/* Chatbot Body Div */}
-                <div className="flex-1 overflow-auto mb-4 mt-4 custom-scrollbar">
+                <div ref={chatContainerRef} className="flex-1 overflow-auto mb-4 mt-4 custom-scrollbar">
                     {/* Display only the ongoing conversation starting from the 6th element */}
                     {messages.slice(6).map((message, index) => (
                         <div key={index} className={`mb-2 flex`}>
                             {message.role === 'user' ? (
-                                <div className={`flex justify-end text-light-1 w-full mr-2  ml-96`}>
+                                <div className={`flex justify-end text-light-1 w-full mr-2 ml-96 sm:ml-36`}>
                                     <p className="bg-blue-500 p-2 inline-block rounded-b-xl rounded-tl-xl mb-2 mt-2">{message.parts[0].text}</p>
                                 </div>
                             ) : (
-                                <div className={`flex justify-start text-light-1 w-full mr-96`}>
+                                <div className={`flex justify-start text-light-1 w-full mr-96 sm:mr-36`}>
                                     <p className="bg-gray-500 p-2 inline-block text-white rounded-b-xl rounded-tr-xl mb-2 mt-2">{message.parts[0].text}</p>
                                 </div>
                             )}
