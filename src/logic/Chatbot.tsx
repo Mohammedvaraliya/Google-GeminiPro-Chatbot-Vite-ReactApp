@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from '@google/generative-ai';
+import Markdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface ChatMessage {
     role: 'user' | 'model';
@@ -121,11 +123,11 @@ const Chatbot: React.FC = () => {
                         <div key={index} className={`mb-2 flex`}>
                             {message.role === 'user' ? (
                                 <div className={`flex justify-end text-light-1 w-full mr-2 xl:ml-96 xs:ml-11`}>
-                                    <p className="bg-blue-500 p-2 inline-block rounded-b-xl rounded-tl-xl mb-2 mt-2">{message.parts[0].text}</p>
+                                    <p className="bg-cyan-900 p-2 inline-block rounded-b-xl rounded-tl-xl mb-2 mt-2"><Markdown remarkPlugins={[remarkGfm]}>{message.parts[0].text}</Markdown></p>
                                 </div>
                             ) : (
                                 <div className={`flex justify-start text-light-1 w-full xl:mr-96 xs:mr-11`}>
-                                    <p className="bg-gray-500 p-2 inline-block text-white rounded-b-xl rounded-tr-xl mb-2 mt-2">{message.parts[0].text}</p>
+                                    <p className="bg-slate-900 p-2 inline-block text-white rounded-b-xl rounded-tr-xl mb-2 mt-2"><Markdown remarkPlugins={[remarkGfm]}>{message.parts[0].text}</Markdown></p>
                                 </div>
                             )}
                         </div>
