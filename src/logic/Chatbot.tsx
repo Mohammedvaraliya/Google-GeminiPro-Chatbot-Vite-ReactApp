@@ -17,6 +17,8 @@ const Chatbot: React.FC = () => {
 
     const chatContainerRef = useRef<HTMLDivElement>(null);
 
+    const [responseReceived, setResponseReceived] = useState<boolean>(false);
+
     const MODEL_NAME = 'gemini-pro';
     const VITE_API_KEY = process.env.VITE_GEMINI_PRO_API_KEY;
     const API_KEY = VITE_API_KEY || '';
@@ -70,6 +72,8 @@ const Chatbot: React.FC = () => {
         setUserMessages([...userMessages, userInput]);
         setUserInput('');
 
+        setResponseReceived(true);
+
         const result = await chat.sendMessage(userInput);
         const response = result.response;
 
@@ -80,6 +84,8 @@ const Chatbot: React.FC = () => {
         ]);
 
         setModelResponses([...modelResponses, response.text()]);
+
+        setResponseReceived(false);
 
     };
 
@@ -141,18 +147,24 @@ const Chatbot: React.FC = () => {
                         value={userInput}
                         onChange={(e) => setUserInput(e.target.value)}
                         onKeyPress={(e) => {
-                            if (e.key === 'Enter') {
+                            if (e.key === 'Enter' && userInput.length > 1) {
                                 handleSendMessage();
                             }
                         }}
                         className="h-12 bg-dark-4 border-none placeholder:text-light-4 focus-visible:ring-1 focus-visible:ring-offset-1 ring-offset-light-3 flex-1 px-4 rounded-md mr-2"
                         placeholder="Type your query here..."
+                        disabled={responseReceived}
                     />
                     <button
                         onClick={handleSendMessage}
-                        className="h-12 bg-primary-500 hover:bg-primary-600 text-light-1 px-4 rounded-md"
+                        className="h-12 bg-amber-500 hover:bg-amber-300 text-light-1 px-4 rounded-md"
+                        disabled={responseReceived || userInput.length <= 1}
                     >
-                        Send
+                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 25 24" fill="none">
+                            <path
+                                d="M23.4846 11.1056L1.48455 0.105612C1.31212 0.0193786 1.11844 -0.0151732 0.926831 0.00611689C0.735219 0.027407 0.553847 0.103631 0.404552 0.225612C0.261977 0.345104 0.155559 0.501998 0.0972618 0.678656C0.0389648 0.855313 0.0311003 1.04473 0.0745524 1.22561L2.72455 10.9956H14.0346V12.9956H2.72455L0.0345524 22.7356C-0.00622112 22.8867 -0.0109806 23.0452 0.0206567 23.1984C0.052294 23.3516 0.119446 23.4953 0.216711 23.6179C0.313977 23.7404 0.438643 23.8384 0.580686 23.904C0.722729 23.9697 0.878184 24.001 1.03455 23.9956C1.19109 23.9947 1.34523 23.957 1.48455 23.8856L23.4846 12.8856C23.6484 12.8017 23.7858 12.6742 23.8818 12.5172C23.9778 12.3601 24.0286 12.1797 24.0286 11.9956C24.0286 11.8116 23.9778 11.6311 23.8818 11.4741C23.7858 11.317 23.6484 11.1895 23.4846 11.1056Z"
+                                fill="black" />
+                        </svg>
                     </button>
                 </div>
             </div>
