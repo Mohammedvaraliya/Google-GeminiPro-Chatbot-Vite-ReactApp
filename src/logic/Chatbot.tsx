@@ -112,7 +112,7 @@ const Chatbot: React.FC = () => {
     }, [messages]);
 
     return (
-        <div className="xs:h-full xs:m-0 xs:p-0 sm:h-full sm:m-0 sm:p-0 xl:h-auto xl:m-10 xl:p-10 md:p-0 md:m-0 md:h-full absolute inset-0 flex flex-col items-center justify-center">
+        <div className="max-xs:h-full max-xs:m-0 max-xs:p-0 xs:h-full xs:m-0 xs:p-0 sm:h-full sm:m-0 sm:p-0 md:h-full md:p-0 md:m-0 xl:h-auto xl:mt-10 xl:pt-10 max-xl:h-auto max-xl:mt-10 max-xl:pt-10 absolute inset-0 flex flex-col items-center justify-center">
             <div className="bg-dark-2 rounded-lg p-8 shadow-lg w-lvw max-w-screen-lg flex flex-col h-full">
                 {/* Chatbot Header Div */}
                 <div className="border-b-2 px-2 py-4 min-w-4xl">
