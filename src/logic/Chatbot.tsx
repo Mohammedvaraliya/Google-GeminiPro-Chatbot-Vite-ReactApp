@@ -20,7 +20,7 @@ const Chatbot: React.FC = () => {
     const [responseReceived, setResponseReceived] = useState<boolean>(false);
 
     const MODEL_NAME = 'gemini-pro';
-    const VITE_API_KEY = process.env.VITE_GEMINI_PRO_API_KEY;
+    const VITE_API_KEY = import.meta.env.VITE_GEMINI_PRO_API_KEY;
     const API_KEY = VITE_API_KEY || '';
 
 
@@ -94,7 +94,7 @@ const Chatbot: React.FC = () => {
 
         const loadChatHistory = async () => {
             try {
-                const response = await fetch('/assets/data/dataset.json');
+                const response = await fetch('/assets/data/dataset_2.json');
                 const data = await response.json();
                 setMessages(data);
             } catch (error) {
@@ -125,7 +125,7 @@ const Chatbot: React.FC = () => {
                 {/* Chatbot Body Div */}
                 <div ref={chatContainerRef} className="flex-1 overflow-auto mb-4 mt-4 custom-scrollbar">
                     {/* Display only the ongoing conversation starting from the 6th element */}
-                    {messages.slice(6).map((message, index) => (
+                    {messages.slice(18).map((message, index) => (
                         <div key={index} className={`mb-2 flex`}>
                             {message.role === 'user' ? (
                                 <div className={`flex justify-end text-light-1 w-full mr-2 xl:ml-96 xs:ml-11`}>
