@@ -1,5 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from '@google/generative-ai';
+// @ts-ignore
+import initializeAppwriteService from '../appwrite/appwriteService.js';
+// @ts-ignore
+import conf from "../conf/conf";
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -9,6 +13,8 @@ interface ChatMessage {
 }
 
 const Chatbot: React.FC = () => {
+    const appwriteService = initializeAppwriteService();
+
     const [messages, setMessages] = useState<ChatMessage[]>([]);
 
     const [userInput, setUserInput] = useState<string>('');
@@ -20,7 +26,7 @@ const Chatbot: React.FC = () => {
     const [responseReceived, setResponseReceived] = useState<boolean>(false);
 
     const MODEL_NAME = 'gemini-pro';
-    const VITE_API_KEY = import.meta.env.VITE_GEMINI_PRO_API_KEY;
+    const VITE_API_KEY = conf.geminiproApiKey;
     const API_KEY = VITE_API_KEY || '';
 
 
@@ -87,6 +93,17 @@ const Chatbot: React.FC = () => {
         setModelResponses([...modelResponses, response.text()]);
 
         setResponseReceived(false);
+
+        // Save to Appwrite Database
+        try {
+            await appwriteService.saveData({
+            query: userInput,
+            response: response.text(),
+            });
+        } catch (error) {
+            // Handle the error (e.g., show a user-friendly message)
+            console.error('Error saving data to Appwrite:', error);
+        }
 
     };
 
