@@ -38,7 +38,8 @@ class AppwriteService {
         appwriteDatabaseId,
         appwriteCollectionId,
         [
-          Query.equal('query', 'response')
+          Query.limit(25),
+          Query.offset(0)
         ]
       );
     } catch (error) {
