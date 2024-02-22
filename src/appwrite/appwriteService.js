@@ -15,7 +15,7 @@ class AppwriteService {
     this.databases = new Databases(this.client);
   }
 
-  async saveData({ query, response }) {
+  async saveData({ query, response, user_rating, user_feedback }) {
     try {
       return await this.databases.createDocument(
         appwriteDatabaseId,
@@ -23,7 +23,9 @@ class AppwriteService {
         ID.unique(),
         {
           query,
-          response
+          response,
+          user_rating,
+          user_feedback
         }
       );
     } catch (error) {

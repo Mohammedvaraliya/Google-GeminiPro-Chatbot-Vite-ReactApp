@@ -6,6 +6,7 @@ import initializeAppwriteService from '../appwrite/appwriteService.js';
 import conf from "../conf/conf";
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import FeedbackForm from '../components/FeedbackForm.js';
 
 interface ChatMessage {
     role: 'user' | 'model';
@@ -13,6 +14,7 @@ interface ChatMessage {
 }
 
 const Chatbot: React.FC = () => {
+
     const appwriteService = initializeAppwriteService();
 
     const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -24,6 +26,9 @@ const Chatbot: React.FC = () => {
     const chatContainerRef = useRef<HTMLDivElement>(null);
 
     const [responseReceived, setResponseReceived] = useState<boolean>(false);
+
+    const [showFeedbackForm, setShowFeedbackForm] = useState<boolean>(true);
+    const [feedbackSubmitted, setFeedbackSubmitted] = useState<boolean>(false);
 
     const MODEL_NAME = 'gemini-pro';
     const VITE_API_KEY = conf.geminiproApiKey;
@@ -79,6 +84,9 @@ const Chatbot: React.FC = () => {
         setUserInput('');
 
         setResponseReceived(true);
+        // Hide the feedback form after submission
+        setShowFeedbackForm(true);
+        setFeedbackSubmitted(false);
 
         const result = await chat.sendMessage(userInput);
         const response = result.response;
@@ -94,21 +102,36 @@ const Chatbot: React.FC = () => {
 
         setResponseReceived(false);
 
+    };
+
+    const handleSubmit = async (rating: number, feedback: string) => {
+        console.log("Submitting feedback:", rating, feedback);
         // Save to Appwrite Database
         try {
+            console.log("Saving data to Appwrite...");
+
+            const latestUserInput = userMessages[userMessages.length - 1];
+            const latestModelResponse = modelResponses[modelResponses.length - 1];
+
             await appwriteService.saveData({
-                query: userInput,
-                response: response.text(),
+                query: latestUserInput,
+                response: latestModelResponse,
+                user_rating: rating,
+                user_feedback: feedback
             });
+
+            console.log("Data saved successfully!");
 
             // Log the list of documents after saving
             const documentList = await appwriteService.listData();
             console.log("List of documents:", documentList);
+
+            // Hide the feedback form after submission
+            setShowFeedbackForm(false);
+            setFeedbackSubmitted(true);
         } catch (error) {
-            // Handle the error (e.g., show a user-friendly message)
             console.error('Error saving or listing data to Appwrite:', error);
         }
-
     };
 
     // Load predefined chat history from JSON file
@@ -154,9 +177,18 @@ const Chatbot: React.FC = () => {
                                     <ReactMarkdown remarkPlugins={[remarkGfm]} className="bg-cyan-900 p-2 inline-block rounded-b-xl rounded-tl-xl mb-2 mt-2">{message.parts[0].text}</ReactMarkdown>
                                 </div>
                             ) : (
-                                <div className={`flex justify-start text-light-1 w-full xl:mr-96 xs:mr-11`}>
+                                <div className={`flex flex-col justify-start text-light-1 w-full xl:mr-96 xs:mr-11`}>
                                     <ReactMarkdown remarkPlugins={[remarkGfm]} className="bg-slate-900 p-2 text-white rounded-b-xl rounded-tr-xl mb-2 mt-2">{message.parts[0].text}</ReactMarkdown>
+
+                                    {/* Conditionally render the feedback form based on the state */}
+                                    {showFeedbackForm && !feedbackSubmitted ? (
+                                        <FeedbackForm onSubmit={handleSubmit} responseReceived={responseReceived} />
+                                    ) : (
+                                        <div className="text-light-1">Feedback was submitted, Thank you</div>
+                                    )}
+
                                 </div>
+
                             )}
                         </div>
                     ))}
@@ -178,7 +210,9 @@ const Chatbot: React.FC = () => {
                         disabled={responseReceived}
                     />
                     <button
-                        onClick={handleSendMessage}
+                        onClick={() => {
+                            handleSendMessage();
+                        }}
                         className="h-12 bg-amber-500 hover:bg-amber-300 text-light-1 px-4 rounded-md"
                         disabled={responseReceived || userInput.length <= 1}
                     >
