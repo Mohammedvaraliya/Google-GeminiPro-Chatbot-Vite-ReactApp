@@ -1,4 +1,4 @@
-import { Client, Databases, ID } from "appwrite";
+import { Client, Databases, ID, Query } from "appwrite";
 import conf from "../conf/conf";
 
 const {
@@ -23,8 +23,23 @@ class AppwriteService {
         ID.unique(),
         {
           query,
-          response,
+          response
         }
+      );
+    } catch (error) {
+      console.error("Appwrite createDocument error: ", error);
+      throw error;
+    }
+  }
+
+  async listData() {
+    try {
+      return await this.databases.listDocuments(
+        appwriteDatabaseId,
+        appwriteCollectionId,
+        [
+          Query.equal('query', 'response')
+        ]
       );
     } catch (error) {
       console.error("Appwrite createDocument error: ", error);

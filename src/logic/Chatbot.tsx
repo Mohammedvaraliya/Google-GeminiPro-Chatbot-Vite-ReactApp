@@ -82,7 +82,7 @@ const Chatbot: React.FC = () => {
 
         const result = await chat.sendMessage(userInput);
         const response = result.response;
-        console.log(response)
+        // console.log(response)
 
         // Update the messages with the model's response
         setMessages((prevMessages) => [
@@ -97,12 +97,16 @@ const Chatbot: React.FC = () => {
         // Save to Appwrite Database
         try {
             await appwriteService.saveData({
-            query: userInput,
-            response: response.text(),
+                query: userInput,
+                response: response.text(),
             });
+
+            // Log the list of documents after saving
+            const documentList = await appwriteService.listData();
+            console.log("List of documents:", documentList);
         } catch (error) {
             // Handle the error (e.g., show a user-friendly message)
-            console.error('Error saving data to Appwrite:', error);
+            console.error('Error saving or listing data to Appwrite:', error);
         }
 
     };
