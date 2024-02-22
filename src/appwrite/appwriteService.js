@@ -36,14 +36,10 @@ class AppwriteService {
     try {
       return await this.databases.listDocuments(
         appwriteDatabaseId,
-        appwriteCollectionId,
-        [
-          Query.limit(25),
-          Query.offset(0)
-        ]
+        appwriteCollectionId
       );
     } catch (error) {
-      console.error("Appwrite createDocument error: ", error);
+      console.error("Appwrite listDocument error: ", error);
       throw error;
     }
   }
