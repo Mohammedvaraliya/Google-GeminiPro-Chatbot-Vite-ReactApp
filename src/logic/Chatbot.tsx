@@ -74,33 +74,38 @@ const Chatbot: React.FC = () => {
 
     const handleSendMessage = async () => {
 
-        // Add the user's message to messages immediately
-        setMessages((prevMessages) => [
-            ...prevMessages,
-            { role: "user", parts: [{ text: userInput }] },
-        ]);
+        try {
+            // Add the user's message to messages immediately
+            setMessages((prevMessages) => [
+                ...prevMessages,
+                { role: "user", parts: [{ text: userInput }] },
+            ]);
 
-        setUserMessages([...userMessages, userInput]);
-        setUserInput('');
+            setUserMessages([...userMessages, userInput]);
+            setUserInput('');
 
-        setResponseReceived(true);
-        // Hide the feedback form after submission
-        setShowFeedbackForm(true);
-        setFeedbackSubmitted(false);
+            setResponseReceived(true);
 
-        const result = await chat.sendMessage(userInput);
-        const response = result.response;
-        // console.log(response)
+            const result = await chat.sendMessage(userInput);
+            const response = result.response;
+            // console.log(response)
 
-        // Update the messages with the model's response
-        setMessages((prevMessages) => [
-            ...prevMessages,
-            { role: "model", parts: [{ text: response.text() }] },
-        ]);
+            // Update the messages with the model's response
+            setMessages((prevMessages) => [
+                ...prevMessages,
+                { role: "model", parts: [{ text: response.text() }] },
+            ]);
 
-        setModelResponses([...modelResponses, response.text()]);
+            setModelResponses([...modelResponses, response.text()]);
 
-        setResponseReceived(false);
+            setResponseReceived(false);
+            // Hide the feedback form after submission
+            setShowFeedbackForm(true);
+            setFeedbackSubmitted(false);
+        } catch (error) {
+            console.error('Error generating the response:', error);
+        }
+
 
     };
 
@@ -154,7 +159,7 @@ const Chatbot: React.FC = () => {
         if (chatContainerRef.current) {
             chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
         }
-    }, [messages]);
+    }, []);
 
     return (
         <div className="max-xs:h-full max-xs:m-0 max-xs:p-0 xs:h-full xs:m-0 xs:p-0 sm:h-full sm:m-0 sm:p-0 md:h-full md:p-0 md:m-0 xl:h-auto xl:mt-10 xl:pt-10 max-xl:h-auto max-xl:mt-10 max-xl:pt-10 absolute inset-0 flex flex-col items-center justify-center">
@@ -175,13 +180,14 @@ const Chatbot: React.FC = () => {
                             {message.role === 'user' ? (
                                 <div className={`flex justify-end text-light-1 w-full mr-2 xl:ml-96 xs:ml-11`}>
                                     <ReactMarkdown remarkPlugins={[remarkGfm]} className="bg-cyan-900 p-2 inline-block rounded-b-xl rounded-tl-xl mb-2 mt-2">{message.parts[0].text}</ReactMarkdown>
+                                    {/* {console.log(message.parts[0].text)} */}
                                 </div>
                             ) : (
                                 <div className={`flex flex-col justify-start text-light-1 w-full xl:mr-96 xs:mr-11`}>
                                     <ReactMarkdown remarkPlugins={[remarkGfm]} className="bg-slate-900 p-2 text-white rounded-b-xl rounded-tr-xl mb-2 mt-2">{message.parts[0].text}</ReactMarkdown>
 
                                     {/* Conditionally render the feedback form based on the state */}
-                                    {showFeedbackForm && !feedbackSubmitted ? (
+                                    {showFeedbackForm && !feedbackSubmitted && message.parts[0].text === modelResponses[modelResponses.length - 1] ? (
                                         <FeedbackForm onSubmit={handleSubmit} responseReceived={responseReceived} />
                                     ) : (
                                         <div className="text-light-1">Feedback was submitted, Thank you</div>
