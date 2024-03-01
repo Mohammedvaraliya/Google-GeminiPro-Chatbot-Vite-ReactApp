@@ -190,7 +190,9 @@ const Chatbot: React.FC = () => {
                                     {showFeedbackForm && !feedbackSubmitted && message.parts[0].text === modelResponses[modelResponses.length - 1] ? (
                                         <FeedbackForm onSubmit={handleSubmit} responseReceived={responseReceived} />
                                     ) : (
-                                        <div className="text-light-1">Feedback was submitted, Thank you</div>
+                                        <div className="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="alert">
+                                            <span className="font-medium">Thank you!</span> Your Feedback has been submitted.
+                                        </div>
                                     )}
 
                                 </div>
